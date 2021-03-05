@@ -386,12 +386,14 @@ class ExercisesTestCase(WgerTestCase):
 
     def test_notification_email_contains_name(self):
         """
-        Tests adding/editing an exercise with a user with enough rights to do this
+        Tests that the email notification contains the correct information
         """
+        username = 'test'
         exercise_name = "Kalle"
-        self.user_login('test')
+        self.user_login(username)
         self.add_exercise_success(name_original=exercise_name)
-        self.assertEquals(mail.outbox[0].body, "The user test submitted a new exercise \"" + exercise_name + "\".")
+        self.assertEquals(mail.outbox[0].body, "The user " + username +
+                          " submitted a new exercise \"" + exercise_name + "\".")
 
     def test_add_exercise_user_no_rights(self):
         """
