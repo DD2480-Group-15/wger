@@ -47,8 +47,9 @@ $(document).ready(function () {
     interpolate: d3.curveLinear,
     target: '#weight_diagram',
     x_accessor: 'date',
-    y_accessor: 'weight',
+    y_accessor: [ "weight", "calories" ],//'weight',
     xax_count: 5,
+    legend:['weight','calories'],
     min_y_from_data: true,
     colors: ['#266dd3']
   };
@@ -57,15 +58,24 @@ $(document).ready(function () {
   url = '/weight/api/get_weight_data/' + username;
 
   d3.json(url).then(function (json) {
-    var data;
-    if (json.length) {
-      data = MG.convert.date(json, 'date');
-      weightChart.data = data;
+      var data=[];
+      console.log(json);
+      if (json.length) {
+        var data1;
+        data1 = MG.convert.date(json, 'date');
+        data1.forEach((item) => {
+                    item.calories = 160;
+              });
+        data.push(data1);
+        console.log(data);
+        //data.push(data2);
+        weightChart.data = data;
+        // Plot the data
+        chartParams.data=data;
+        MG.data_graphic(chartParams);
 
-      // Plot the data
-      chartParams.data = data;
-      MG.data_graphic(chartParams);
-    }
+      }
+
   });
 
   $('.modify-time-period-controls button').click(function () {
@@ -79,7 +89,7 @@ $(document).ready(function () {
       MG.data_graphic(chartParams);
     }
   });
-  
+
   $(document.querySelector("#enable_bmi")).click(function(){
   	var height = document.querySelector("#height").value / 100;
   	//kg = bmi * cm²

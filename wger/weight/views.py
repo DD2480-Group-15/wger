@@ -56,7 +56,7 @@ from wger.utils.helpers import check_access
 from wger.weight import helpers
 from wger.weight.forms import WeightForm
 from wger.weight.models import WeightEntry
-
+from wger.core.models import UserProfile
 
 logger = logging.getLogger(__name__)
 

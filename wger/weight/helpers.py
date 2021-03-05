@@ -27,6 +27,10 @@ from collections import OrderedDict
 from django.core.cache import cache
 
 # wger
+from wger.nutrition.models import NutritionPlan
+
+from wger.core.models import UserProfile
+
 from wger.manager.models import (
     WorkoutLog,
     WorkoutSession
@@ -216,7 +220,9 @@ def get_last_entries(user, amount=5):
 
     last_entries = WeightEntry.objects.filter(user=user).order_by('-date')[:5]
     last_entries_details = []
-
+    #edit for calory
+    User_entries = UserProfile.objects.filter(user=user).order_by('-calories')
+    nutrition_entries=NutritionPlan.objects.filter(user=user).order_by('-creation_date')
     for index, entry in enumerate(last_entries):
         curr_entry = entry
         prev_entry_index = index + 1
@@ -231,6 +237,6 @@ def get_last_entries(user, amount=5):
             day_diff = (curr_entry.date - prev_entry.date).days
         else:
             weight_diff = day_diff = None
-        last_entries_details.append((curr_entry, weight_diff, day_diff))
+        last_entries_details.append((curr_entry, weight_diff, day_diff,User_entries[0].calories,nutrition_entries[0].get_nutritional_values()['total']['energy']))
 
     return last_entries_details
