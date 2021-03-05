@@ -291,7 +291,7 @@ class ExercisesTestCase(WgerTestCase):
         # Exercise was not added
         self.assertEqual(count_before, count_after)
 
-    def add_exercise_success(self, admin=False):
+    def add_exercise_success(self, admin=False, name_original=random_string()):
         """
         Tests adding/editing an exercise with a user with enough rights to do this
         """
@@ -299,7 +299,6 @@ class ExercisesTestCase(WgerTestCase):
         # Add an exercise
         count_before = Exercise.objects.count()
         description = 'a nice, long and accurate description for the exercise'
-        name_original = random_string()
         response = self.client.post(reverse('exercise:exercise:add'),
                                     {'name_original': name_original,
                                      'license': 1,
@@ -384,6 +383,15 @@ class ExercisesTestCase(WgerTestCase):
         """
         self.user_login('admin')
         self.add_exercise_success(admin=True)
+
+    def test_notification_email_contains_name(self):
+        """
+        Tests adding/editing an exercise with a user with enough rights to do this
+        """
+        exercise_name = "Kalle"
+        self.user_login('test')
+        self.add_exercise_success(name_original=exercise_name)
+        self.assertEquals(mail.outbox[0].body, "The user test submitted a new exercise \"" + exercise_name + "\".")
 
     def test_add_exercise_user_no_rights(self):
         """
