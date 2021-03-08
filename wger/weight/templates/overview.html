@@ -49,6 +49,8 @@
         <th>{% trans 'Weight' %}</th>
         <th>{% trans 'Change' context "Noun, not verb" %}</th>
         <th>{% trans 'Days' %}</th>
+        <th>{% trans 'Planned Calorie/Kcal' %}</th>
+        <th>{% trans 'Logged Calorie/Kcal' %}</th>
     </tr>
     {% for entry_detail in last_five_weight_entries_details %}
         <tr>
@@ -72,6 +74,8 @@
                     -/-
                 {% endif %}
             </td>
+            <td>{{ entry_detail.3 }}</td>
+             <td>{{ entry_detail.4 }}</td>
             <td>
                 <div class="btn-group" role="group" >
                     <div class="btn-group" role="group">

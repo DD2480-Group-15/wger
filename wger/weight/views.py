@@ -17,8 +17,13 @@
 # Standard Library
 import csv
 import datetime
+import json
 import logging
+import sys
+import os
+o_path = os.getcwd()
 
+sys.path.append(o_path)
 # Django
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -168,12 +173,10 @@ def overview(request, username=None):
         * http://d3js.org/
     """
     is_owner, user = check_access(request.user, username)
-
     template_data = {}
-
-    min_date = WeightEntry.objects.filter(user=user).\
+    min_date = WeightEntry.objects.filter(user=user). \
         aggregate(Min('date'))['date__min']
-    max_date = WeightEntry.objects.filter(user=user).\
+    max_date = WeightEntry.objects.filter(user=user). \
         aggregate(Max('date'))['date__max']
     if min_date:
         template_data['min_date'] = 'new Date(%(year)s, %(month)s, %(day)s)' % \
@@ -187,10 +190,18 @@ def overview(request, username=None):
                                      'day': max_date.day}
 
     last_weight_entries = helpers.get_last_entries(user)
-
     template_data['is_owner'] = is_owner
     template_data['owner_user'] = user
     template_data['show_shariff'] = is_owner
+    if username == 'my_test':
+        test_json = open('./wger/weight/fixtures/test_calorie_data.json')
+        data = json.load(test_json)
+        test_entries = []
+        for i in range(len(last_weight_entries)):
+            test_entries.append(last_weight_entries[i][:3] + (
+            data[i]['Planned Calorie/Kcal'], data[i]['Logged Calorie/Kcal']))
+        template_data['last_five_weight_entries_details'] = test_entries
+        return render(request, 'overview.html', template_data)
     template_data['last_five_weight_entries_details'] = last_weight_entries
     return render(request, 'overview.html', template_data)
 

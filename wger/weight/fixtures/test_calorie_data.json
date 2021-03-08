@@ -1,0 +1,33 @@
+[
+    {
+
+            "date": "2021-03-03",
+         "Planned Calorie/Kcal": 1200,
+            "Logged Calorie/Kcal": 1180
+    },
+    {
+
+            "date": "2021-03-04",
+         "Planned Calorie/Kcal": 1209,
+            "Logged Calorie/Kcal": 1180
+    },
+    {
+
+            "date": "2021-03-05",
+      "Planned Calorie/Kcal": 1399,
+            "Logged Calorie/Kcal": 1180
+
+    },
+    {
+            "date": "2021-03-06",
+      "Planned Calorie/Kcal": 1299,
+            "Logged Calorie/Kcal": 1180
+
+    },
+    {
+
+            "date": "2021-03-07",
+         "Planned Calorie/Kcal": 1399,
+            "Logged Calorie/Kcal": 1180
+    }
+]

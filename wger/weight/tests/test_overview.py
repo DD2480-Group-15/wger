@@ -14,11 +14,20 @@
 
 # Standard Library
 import logging
-
+import sys
+import os
+o_path = os.getcwd()
+sys.path.append(o_path)
 # Django
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.urls import reverse
 
 # wger
+from wger.weight.models import WeightEntry
+
+from wger.core.demo import create_demo_entries
+
 from wger.core.tests.base_testcase import WgerTestCase
 
 
@@ -45,6 +54,36 @@ class WeightOverviewTestCase(WgerTestCase):
         self.user_login('test')
         self.weight_overview()
 
+    def test_calorie(self):
+        username='my_test'
+        password='123456QWERT'
+        email = ''
+        user = User.objects.create_user(username, email, password)
+        user.save()
+        user_profile = user.userprofile
+        user_profile.is_temporary = False
+        user_profile.age = 25
+        user_profile.height = 175
+        user_profile.save()
+        user = authenticate(username=username, password=password)
+        create_demo_entries(user=user)
+        self.user_login('my_test')
+        response = self.client.get(reverse('weight:overview',
+                                           kwargs={'username': self.current_user}))
+        from lxml import etree
+        dom = etree.HTML(str(response.content))
+        date = dom.xpath(
+            '/html/body/div/div//div[@id="content"]//table[@class="table"]/tr//td[1]/text()')
+        plan_c = dom.xpath(
+            '/html/body/div/div//div[@id="content"]//table[@class="table"]/tr//td[5]/text()')
+        log_c = dom.xpath(
+            '/html/body/div/div//div[@id="content"]//table[@class="table"]/tr//td[6]/text()')
+        import json
+        f = open('./wger/weight/fixtures/test_calorie_data.json')
+        data = json.load(f)
+        for i in range(len(date)):
+            self.assertEqual(plan_c[i], str(data[i]['Planned Calorie/Kcal']))
+            self.assertEqual(log_c[i], str(data[i]['Logged Calorie/Kcal']))
 
 class WeightExportCsvTestCase(WgerTestCase):
     """

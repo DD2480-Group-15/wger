@@ -27,6 +27,10 @@ from collections import OrderedDict
 from django.core.cache import cache
 
 # wger
+from django.shortcuts import get_object_or_404
+
+from wger.nutrition.models import NutritionPlan
+
 from wger.manager.models import (
     WorkoutLog,
     WorkoutSession
@@ -213,10 +217,24 @@ def get_last_entries(user, amount=5):
     This can be used e.g. to present a list where the last entries and
     their changes are presented.
     """
-
     last_entries = WeightEntry.objects.filter(user=user).order_by('-date')[:5]
     last_entries_details = []
-
+    #edit for calory
+    nutrition_entries=NutritionPlan.objects.filter(user=user).order_by('-creation_date')
+    #traverse entries
+    planned_calorie_entries=[0,0,0,0,0]
+    logged_calorie_entries =[0,0,0,0,0]
+    for i in range(len(last_entries)):
+        en=last_entries[i]
+        for n_en in nutrition_entries:
+            if n_en.creation_date==en.date:
+                plan = get_object_or_404(NutritionPlan, pk=n_en.id)
+                log_data = 0
+                planned_calories = plan.get_nutritional_values()['total']['energy']
+                for item in plan.get_log_overview():
+                    log_data=log_data+item['energy']
+                logged_calorie_entries[i]=log_data
+                planned_calorie_entries[i]=planned_calories
     for index, entry in enumerate(last_entries):
         curr_entry = entry
         prev_entry_index = index + 1
@@ -231,6 +249,6 @@ def get_last_entries(user, amount=5):
             day_diff = (curr_entry.date - prev_entry.date).days
         else:
             weight_diff = day_diff = None
-        last_entries_details.append((curr_entry, weight_diff, day_diff))
+        last_entries_details.append((curr_entry, weight_diff, day_diff,planned_calorie_entries[index],logged_calorie_entries[index]))
 
     return last_entries_details

@@ -172,10 +172,16 @@ class WgerTestCase(BaseTestCase, TestCase):
         """
         Login the user, by default as 'admin'
         """
-        password = f'{user}{user}'
-        self.client.login(username=user, password=password)
-        self.current_user = user
-        self.current_password = password
+        if user == 'my_test':
+            password = '123456QWERT'
+            self.client.login(username=user, password=password)
+            self.current_user = user
+            self.current_password = password
+        else:
+            password = f'{user}{user}'
+            self.client.login(username=user, password=password)
+            self.current_user = user
+            self.current_password = password
 
     def user_logout(self):
         """
