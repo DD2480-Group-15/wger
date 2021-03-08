@@ -28,6 +28,7 @@ function modifyTimePeriod(data, pastNumberDays) {
       return filtered;
     }
   }
+  console.log(data);
   return data;
 }
 
@@ -47,16 +48,17 @@ $(document).ready(function () {
     interpolate: d3.curveLinear,
     target: '#weight_diagram',
     x_accessor: 'date',
-    y_accessor: [ "weight", "calorie" ],//'weight',
+    y_accessor: [ "weight", "Planned_calorie","Logged_calorie" ],//'weight',
     xax_count: 5,
-    legend:['weight','calories'],
+    legend:['weight','Planned calorie',"Logged calorie"],
     min_y_from_data: true,
     colors: ['#266dd3']
   };
 
   username = $('#current-username').data('currentUsername');
   url = '/weight/api/get_weight_data/' + username;
-
+  var url1;
+  url1='/weight/overview/'+username;
   d3.json(url).then(function (json) {
       var data=[];
       console.log(json);
@@ -64,7 +66,8 @@ $(document).ready(function () {
         var data1;
         data1 = MG.convert.date(json, 'date');
         data1.forEach((item) => {
-                    item.calorie = 160;
+                    item.Planned_calorie = 160;
+                    item.Logged_calorie = 130;
               });
         data.push(data1);
         console.log(data);
@@ -77,6 +80,7 @@ $(document).ready(function () {
       }
 
   });
+
 
   $('.modify-time-period-controls button').click(function () {
     var pastNumberDays = $(this).data('time_period');
