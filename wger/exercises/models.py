@@ -427,7 +427,7 @@ class Exercise(AbstractSubmissionModel, AbstractLicenseModel, models.Model):
 
             subject = _('New user submitted exercise')
             message = _('The user {0} submitted a new exercise "{1}".').format(
-                request.user.username, self.name)
+                request.user.username, self.name_original)
             mail.mail_admins(str(subject),
                              str(message),
                              fail_silently=True)
